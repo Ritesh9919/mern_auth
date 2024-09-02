@@ -1,10 +1,11 @@
 import React, { useState } from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
+import { toast } from "react-toastify";
 import axios from "axios";
 
 function Signup() {
+  const navigate = useNavigate();
   const [formData, setFormData] = useState({});
-  const [error, setError] = useState(false);
   const [loading, setLoading] = useState(false);
 
   const handleChange = (e) => {
@@ -15,16 +16,13 @@ function Signup() {
     e.preventDefault();
     try {
       setLoading(true);
-      setError(false);
       const response = await axios.post("/api/auth/signup", formData);
-      setLoading(false);
-      if (response.data.error) {
-        setError(true);
-        return;
-      }
+      toast.success(response.data.message);
+      navigate("/sign-in");
     } catch (error) {
+      toast.error(error.message);
+    } finally {
       setLoading(false);
-      setError(true);
     }
   };
 
@@ -69,9 +67,6 @@ function Signup() {
           <span className="text-blue-500">Sign In</span>
         </Link>
       </div>
-      <p className="text-red-700 mt-5 text-center">
-        {error && "Internal server error"}
-      </p>
     </div>
   );
 }
