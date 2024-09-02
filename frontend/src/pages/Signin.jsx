@@ -1,18 +1,15 @@
 import React, { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
+import { toast } from "react-toastify";
 import axios from "axios";
-import {
-  signinStart,
-  signinSuccess,
-  signinFailure,
-} from "../redux/user/userSlice";
-import { useDispatch, useSelector } from "react-redux";
+import { signinSuccess } from "../redux/user/userSlice";
+import { useDispatch } from "react-redux";
 
 function Signin() {
   const navigate = useNavigate();
   const dispatch = useDispatch();
   const [formData, setFormData] = useState({});
-  const { loading, error } = useSelector((state) => state.user);
+  const [loading, setLoading] = useState(false);
 
   const handleChange = (e) => {
     setFormData({ ...formData, [e.target.id]: e.target.value });
@@ -21,17 +18,15 @@ function Signin() {
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      dispatch(signinStart());
+      setLoading(true);
       const response = await axios.post("/api/auth/signin", formData);
-      console.log(response.data);
-      if (response.data.error) {
-        dispatch(signinFailure(response.data.message));
-        return;
-      }
       dispatch(signinSuccess(response.data.data));
       navigate("/");
+      toast.success(response.data.message);
     } catch (error) {
-      dispatch(signinFailure(error));
+      toast.error(error.message);
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -69,9 +64,6 @@ function Signin() {
           <span className="text-blue-500">Sign Up</span>
         </Link>
       </div>
-      <p className="text-red-700 mt-5 text-center">
-        {error && "Internal server error"}
-      </p>
     </div>
   );
 }
