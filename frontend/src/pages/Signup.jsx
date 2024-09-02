@@ -16,11 +16,7 @@ function Signup() {
     try {
       setLoading(true);
       setError(false);
-      const response = await axios.post("/api/auth/signup", {
-        username: formData.username,
-        email: formData.email,
-        password: formData.password,
-      });
+      const response = await axios.post("/api/auth/signup", formData);
       setLoading(false);
       if (response.data.error) {
         setError(true);
