@@ -1,7 +1,7 @@
 import dotenv from "dotenv";
 dotenv.config();
 import express from "express";
-import mongoose from "mongoose";
+import cookieParser from "cookie-parser";
 import connectDB from "./src/db/index.js";
 
 import errorHandlerMiddleware from "./src/middlewares/error_handler.middleware.js";
@@ -14,6 +14,7 @@ const PORT = process.env.PORT || 3000;
 
 const app = express();
 app.use(express.json());
+app.use(cookieParser());
 
 app.use("/api/users", userRouter);
 app.use("/api/auth", authRouter);
