@@ -3,6 +3,7 @@ import { app } from "../firebase";
 import axios from "axios";
 import { useDispatch } from "react-redux";
 import { signinSuccess } from "../redux/user/userSlice";
+import { toast } from "react-toastify";
 
 function OAuth() {
   const dispatch = useDispatch();
@@ -17,8 +18,10 @@ function OAuth() {
         photo: result.user.photoURL,
       });
       dispatch(signinSuccess(res.data));
+      toast.success("Signin successfull");
     } catch (error) {
       console.error("Could not login with google", error);
+      toast.error(error.message);
     }
   };
   return (
