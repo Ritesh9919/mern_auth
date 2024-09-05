@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
 import axios from "axios";
+import OAuth from "../components/Oauth";
 
 function Signup() {
   const navigate = useNavigate();
@@ -60,6 +61,7 @@ function Signup() {
         >
           {loading ? "Loading" : "Sign Up"}
         </button>
+        <OAuth />
       </form>
       <div className="flex gap-2 justify-center mt-7">
         <p>Have an account?</p>
