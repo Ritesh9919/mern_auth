@@ -9,10 +9,16 @@ import {
 import { app } from "../firebase";
 import { toast } from "react-toastify";
 import axios from "axios";
-import { updateUserSuccess, deleteUserSuccess } from "../redux/user/userSlice";
+import {
+  updateUserSuccess,
+  deleteUserSuccess,
+  signout,
+} from "../redux/user/userSlice";
+import { useNavigate } from "react-router-dom";
 
 function Profile() {
   const dispatch = useDispatch();
+  const navigate = useNavigate();
   const fileRef = useRef(null);
   const [image, setImage] = useState(undefined);
   const [imagePercent, setImagePercent] = useState(0);
@@ -86,6 +92,19 @@ function Profile() {
       toast.error(error.message);
     }
   };
+
+  const handleSignOut = async () => {
+    try {
+      const response = await axios.post("/api/auth/signout");
+      if (response.data.success) {
+        dispatch(signout());
+        toast.success(response.data.message);
+        navigate("/sign-in");
+      }
+    } catch (error) {
+      toast.error(error.message);
+    }
+  };
   return (
     <div className="p-3 max-w-lg mx-auto">
       <h1 className="text-3xl font-semibold text-center my-7">Profile</h1>
@@ -153,7 +172,9 @@ function Profile() {
         >
           Delete Account
         </span>
-        <span className="text-red-700 cursor-pointer">Sign Out</span>
+        <span className="text-red-700 cursor-pointer" onClick={handleSignOut}>
+          Sign Out
+        </span>
       </div>
     </div>
   );

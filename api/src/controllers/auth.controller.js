@@ -87,3 +87,15 @@ export const signinWithGoogle = async (req, res, next) => {
     next(error);
   }
 };
+
+export const signout = async (req, res, next) => {
+  try {
+    await res
+      .clearCookie("token")
+      .status(200)
+      .json(new ApiResponse(true, "sign out successfully"));
+  } catch (error) {
+    console.error("error in authController signout api", error.message);
+    next(error);
+  }
+};
