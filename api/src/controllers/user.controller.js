@@ -33,3 +33,16 @@ export const updateUserProfile = async (req, res, next) => {
     next(error);
   }
 };
+
+export const deleteUser = async (req, res, next) => {
+  try {
+    if (req.user.userId !== req.params.userId) {
+      return next(new ApiError("You can only delete your account", 400));
+    }
+    await User.findByIdAndDelete(req.params.userId);
+    return res.status(200).json(new ApiResponse(true, "user deleted"));
+  } catch (error) {
+    console.error("error in userController deleteUser api", error.message);
+    next(error);
+  }
+};

@@ -9,7 +9,7 @@ import {
 import { app } from "../firebase";
 import { toast } from "react-toastify";
 import axios from "axios";
-import { updateUserSuccess } from "../redux/user/userSlice";
+import { updateUserSuccess, deleteUserSuccess } from "../redux/user/userSlice";
 
 function Profile() {
   const dispatch = useDispatch();
@@ -58,8 +58,10 @@ function Profile() {
         `/api/users/update/${currentUser._id}`,
         formData
       );
-      dispatch(updateUserSuccess(response.data.data));
-      toast.success(response.data.message);
+      if (response.data.success) {
+        dispatch(updateUserSuccess(response.data.data));
+        toast.success(response.data.message);
+      }
     } catch (error) {
       toast.error(error.message);
     } finally {
@@ -69,6 +71,20 @@ function Profile() {
 
   const handleOnChange = (e) => {
     setFormData({ ...formData, [e.target.id]: e.target.value });
+  };
+
+  const handleDeleteUser = async () => {
+    try {
+      const response = await axios.delete(
+        `/api/users/delete/${currentUser._id}`
+      );
+      if (response.data.success) {
+        dispatch(deleteUserSuccess());
+        toast.success(response.data.message);
+      }
+    } catch (error) {
+      toast.error(error.message);
+    }
   };
   return (
     <div className="p-3 max-w-lg mx-auto">
@@ -131,7 +147,12 @@ function Profile() {
         </button>
       </form>
       <div className="flex justify-between items-center mt-5">
-        <span className="text-red-700 cursor-pointer">Delete Account</span>
+        <span
+          className="text-red-700 cursor-pointer"
+          onClick={handleDeleteUser}
+        >
+          Delete Account
+        </span>
         <span className="text-red-700 cursor-pointer">Sign Out</span>
       </div>
     </div>
