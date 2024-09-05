@@ -4,7 +4,7 @@ import { toast } from "react-toastify";
 import axios from "axios";
 import { signinSuccess } from "../redux/user/userSlice";
 import { useDispatch } from "react-redux";
-import OAuth from "../components/Oauth";
+import OAuth from "../components/OAuths";
 
 function Signin() {
   const navigate = useNavigate();

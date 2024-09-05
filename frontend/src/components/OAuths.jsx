@@ -6,7 +6,7 @@ import { signinSuccess } from "../redux/user/userSlice";
 import { toast } from "react-toastify";
 import { useNavigate } from "react-router-dom";
 
-function OAuth() {
+function OAuths() {
   const navigate = useNavigate();
   const dispatch = useDispatch();
   const handleGoogleClick = async () => {
@@ -38,4 +38,4 @@ function OAuth() {
   );
 }
 
-export default OAuth;
+export default OAuths;
