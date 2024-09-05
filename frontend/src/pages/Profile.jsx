@@ -1,5 +1,5 @@
 import React, { useRef, useState, useEffect } from "react";
-import { useSelector } from "react-redux";
+import { useSelector, useDispatch } from "react-redux";
 import {
   getDownloadURL,
   getStorage,
@@ -7,14 +7,18 @@ import {
   uploadBytesResumable,
 } from "firebase/storage";
 import { app } from "../firebase";
+import { toast } from "react-toastify";
+import axios from "axios";
+import { updateUserSuccess } from "../redux/user/userSlice";
 
 function Profile() {
+  const dispatch = useDispatch();
   const fileRef = useRef(null);
   const [image, setImage] = useState(undefined);
   const [imagePercent, setImagePercent] = useState(0);
   const [imageError, setImageError] = useState(false);
   const [formData, setFormData] = useState({});
-  console.log(formData);
+  const [loading, setLoading] = useState(false);
   const { currentUser } = useSelector((state) => state.user);
 
   useEffect(() => {
@@ -45,10 +49,31 @@ function Profile() {
       }
     );
   };
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    try {
+      setLoading(true);
+      const response = await axios.put(
+        `/api/users/update/${currentUser._id}`,
+        formData
+      );
+      dispatch(updateUserSuccess(response.data.data));
+      toast.success(response.data.message);
+    } catch (error) {
+      toast.error(error.message);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleOnChange = (e) => {
+    setFormData({ ...formData, [e.target.id]: e.target.value });
+  };
   return (
     <div className="p-3 max-w-lg mx-auto">
       <h1 className="text-3xl font-semibold text-center my-7">Profile</h1>
-      <form className="flex flex-col gap-4">
+      <form onSubmit={handleSubmit} className="flex flex-col gap-4">
         <input
           type="file"
           ref={fileRef}
@@ -81,6 +106,7 @@ function Profile() {
           placeholder="username"
           id="username"
           className="bg-slate-100 p-3 rounded-lg"
+          onChange={handleOnChange}
         />
         <input
           defaultValue={currentUser.email}
@@ -88,18 +114,20 @@ function Profile() {
           placeholder="Email"
           id="email"
           className="bg-slate-100 p-3 rounded-lg"
+          onChange={handleOnChange}
         />
         <input
           type="password"
           placeholder="Password"
           id="password"
           className="bg-slate-100 p-3 rounded-lg"
+          onChange={handleOnChange}
         />
         <button
+          disabled={loading}
           className="bg-slate-700 p-3 rounded-lg text-white uppercase hover:opacity-95 disabled:opacity-80"
-          type="button"
         >
-          Update
+          {loading ? "Loading..." : "Update"}
         </button>
       </form>
       <div className="flex justify-between items-center mt-5">

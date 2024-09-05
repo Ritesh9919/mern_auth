@@ -4,8 +4,10 @@ import axios from "axios";
 import { useDispatch } from "react-redux";
 import { signinSuccess } from "../redux/user/userSlice";
 import { toast } from "react-toastify";
+import { useNavigate } from "react-router-dom";
 
 function OAuth() {
+  const navigate = useNavigate();
   const dispatch = useDispatch();
   const handleGoogleClick = async () => {
     try {
@@ -19,6 +21,7 @@ function OAuth() {
       });
       dispatch(signinSuccess(res.data));
       toast.success("Signin successfull");
+      navigate("/");
     } catch (error) {
       console.error("Could not login with google", error);
       toast.error(error.message);

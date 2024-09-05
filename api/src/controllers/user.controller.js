@@ -7,10 +7,10 @@ export const test = (req, res) => {
 };
 
 export const updateUserProfile = async (req, res, next) => {
-  if (req.user.userId !== req.params.userId) {
-    return next(new ApiError("You can only update your account", 400));
-  }
   try {
+    if (req.user.userId !== req.params.userId) {
+      return next(new ApiError("You can only update your account", 400));
+    }
     const user = await User.findByIdAndUpdate(
       req.params.userId,
       {
@@ -22,7 +22,7 @@ export const updateUserProfile = async (req, res, next) => {
         },
       },
       { new: true }
-    );
+    ).select("-password");
 
     return res.status(200).json(new ApiResponse(true, "profile updated", user));
   } catch (error) {
